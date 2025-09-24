@@ -1,15 +1,17 @@
-FROM node:18-alpine
+# Use Node.js image for React + Vite
+FROM node:22
 
 WORKDIR /app
 
-# copy package.json first for caching
-COPY package.json package-lock.json* /app/
-
+# Copy package.json first for caching
+COPY package*.json ./
 RUN npm install
 
-# copy project files
-COPY . /app
+# Copy the rest of frontend code
+COPY . .
 
-EXPOSE 5173
+# Expose Vite port
+EXPOSE 3000
 
-CMD ["npm", "run", "dev"]
+# Default command: run Vite dev server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

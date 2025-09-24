@@ -1,23 +1,24 @@
-# Use slim Python base
+# Use official Python slim image
 FROM python:3.11-slim
 
-# install build deps for psycopg2
-RUN apt-get update && apt-get install -y build-essential libpq-dev gcc --no-install-recommends \
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies (needed for psycopg2 to connect to Postgres)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /code
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy requirements first for docker caching
-COPY requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir -r /code/requirements.txt
+# Copy project files
+COPY . .
 
-# Copy project
-COPY . /code
-
-# Make entrypoint executable
-RUN chmod +x /code/entrypoint.sh
-
+# Expose Django port
 EXPOSE 8000
 
-# Entrypoint will run migrations and start the server
-ENTRYPOINT ["/code/entrypoint.sh"]
+# Default command: run Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

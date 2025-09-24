@@ -16,7 +16,10 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 
+from decouple import config
+from django.core.management.utils import get_random_secret_key 
 
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,12 +31,15 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("DJANGO_SECRET_KEY")
+SECRET_KEY = config("DJANGO_SECRET_KEY", default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
+DEBUG = config("DJANGO_DEBUG", default="False").lower() == "true"
 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default="127.0.0.1", cast=Csv())
+
+# Read env var, default to "localhost", split by commas into a list
+DJANGO_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS
 
 
 # Application definition
@@ -61,6 +67,10 @@ INSTALLED_APPS = [
     'lab',
     'pharmacy',
     'reports',
+    'users',
+    
+    # API app
+    # 'api',
 ]
 
 MIDDLEWARE = [
@@ -103,8 +113,8 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
+        "HOST": os.getenv("POSTGRES_HOST", 'db'),
+        "PORT": os.getenv("POSTGRES_PORT", '5432'),
     }
 }
 
@@ -159,16 +169,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 REST_FRAMEWORK = {
-    # Use both token-based and session-based authentication
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-
-    # Require users to be authenticated by default
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",   # helpful for browsable API testing
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 
     # Enable filtering support using django-filters
     'DEFAULT_FILTER_BACKENDS': [
@@ -176,9 +181,17 @@ REST_FRAMEWORK = {
     ],
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
-#Allow frontend (React) to talk to backend:
+# For local dev — allow your React dev origin (adjust port if needed)
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React dev server
-    "http://127.0.0.1:5173",
+    "http://localhost:5173",  # vite default
+    "http://localhost:3000",  # create-react-app default
 ]
+
+# Custom user model
+AUTH_USER_MODEL = "users.User"

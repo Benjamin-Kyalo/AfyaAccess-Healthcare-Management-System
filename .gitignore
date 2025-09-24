@@ -1,2 +1,31 @@
-# Environment files
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+venv/
+
+# Django media / static
+media/
+staticfiles/
+
+# Django local settings
+*.sqlite3
+
+# Node
+node_modules/
+
+# Env files
 .env
+
+# VSCode
+.vscode/
+
+# Mac
+.DS_Store
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,238 @@
+/* ===============================
+   Common Theme Styles
+   =============================== */
+
+/* Root variables: easy to reuse & change theme */
+:root {
+  --color-primary: #6c5ce7;   /* Purple */
+  --color-secondary: #fd79a8; /* Pink */
+  --color-accent: #0984e3;    /* Blue */
+  --color-bg: #f5f6fa;        /* Light background */
+  --color-white: #ffffff;
+  --color-text: #2d3436;
+  --color-muted: #636e72;
+
+  --radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: var(--color-white);
+  margin: 0 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.navbar a:hover {
+  color: var(--color-secondary);
+}
+
+/* Container */
+.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+/* Buttons */
+.btn {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn:hover {
+  background: var(--color-accent);
+}
+
+/* Form */
+.form {
+  background: var(--color-white);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin: 1rem auto;
+  max-width: 500px;
+}
+
+.form h2 {
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-muted);
+  border-radius: var(--radius);
+  outline: none;
+  transition: var(--transition);
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 4px rgba(9,132,227,0.3);
+}
+
+/* Cards (for dashboards, patients list, etc.) */
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+/* --- dashboard grid & patient card --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* patient card tweaks */
+.patient-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.patient-header {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patient-name {
+  font-weight: 700;
+  color: var(--color-text, #2d3436);
+}
+
+.patient-body { font-size: 0.95rem; color: #444; }
+
+/* status chip base */
+.status-chip {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* status colors */
+.status-billing { background: var(--color-secondary, #fd79a8); }      /* pink */
+.status-consultation { background: var(--color-primary, #6c5ce7); }  /* purple */
+.status-lab { background: var(--color-accent, #0984e3); }             /* blue */
+.status-done { background: #2ecc71; }                                 /* green */
+
+/* small btn variant */
+.btn.small {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  margin-right: 6px;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+
+/* Common form styling */
+.form-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #2b6777; /* your brand color */
+}
+
+form label {
+  display: block;
+  margin: 0.5rem 0 0.2rem;
+  font-weight: bold;
+}
+
+form input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 6px;
+  background: #2b6777;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4750;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-bottom: 1rem;
+}
