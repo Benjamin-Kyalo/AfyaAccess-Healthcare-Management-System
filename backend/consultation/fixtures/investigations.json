@@ -1,0 +1,22 @@
+[
+  {"model": "consultation.investigation", "pk": 1, "fields": {"name": "CBC", "price": 800, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 2, "fields": {"name": "RBS", "price": 300, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 3, "fields": {"name": "FBS", "price": 350, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 4, "fields": {"name": "RFT", "price": 1200, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 5, "fields": {"name": "LFT", "price": 1200, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 6, "fields": {"name": "Malaria RDT", "price": 250, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 7, "fields": {"name": "Malaria smear", "price": 500, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 8, "fields": {"name": "Urinalysis", "price": 400, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 9, "fields": {"name": "Urine culture", "price": 1200, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 10, "fields": {"name": "Blood culture", "price": 2500, "availability_status": "Out of stock"}},
+  {"model": "consultation.investigation", "pk": 11, "fields": {"name": "Chest X-ray", "price": 1000, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 12, "fields": {"name": "Abdominal US", "price": 2000, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 13, "fields": {"name": "ECG", "price": 700, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 14, "fields": {"name": "Pregnancy test", "price": 250, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 15, "fields": {"name": "HIV rapid test", "price": 400, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 16, "fields": {"name": "HBsAg rapid", "price": 700, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 17, "fields": {"name": "Stool R/E", "price": 500, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 18, "fields": {"name": "ESR", "price": 400, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 19, "fields": {"name": "CRP", "price": 900, "availability_status": "Available"}},
+  {"model": "consultation.investigation", "pk": 20, "fields": {"name": "Sputum AFB", "price": 600, "availability_status": "Available"}}
+]

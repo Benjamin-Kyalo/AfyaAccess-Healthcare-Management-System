@@ -1,0 +1,22 @@
+[
+  {"model": "consultation.diagnosis", "pk": 1, "fields": {"name": "Malaria"}},
+  {"model": "consultation.diagnosis", "pk": 2, "fields": {"name": "URTI / Common Cold"}},
+  {"model": "consultation.diagnosis", "pk": 3, "fields": {"name": "Pneumonia"}},
+  {"model": "consultation.diagnosis", "pk": 4, "fields": {"name": "Hypertension"}},
+  {"model": "consultation.diagnosis", "pk": 5, "fields": {"name": "Type 2 Diabetes Mellitus"}},
+  {"model": "consultation.diagnosis", "pk": 6, "fields": {"name": "Acute Gastroenteritis"}},
+  {"model": "consultation.diagnosis", "pk": 7, "fields": {"name": "Urinary Tract Infection"}},
+  {"model": "consultation.diagnosis", "pk": 8, "fields": {"name": "Cellulitis"}},
+  {"model": "consultation.diagnosis", "pk": 9, "fields": {"name": "Pharyngitis / Tonsillitis"}},
+  {"model": "consultation.diagnosis", "pk": 10, "fields": {"name": "Otitis Media"}},
+  {"model": "consultation.diagnosis", "pk": 11, "fields": {"name": "Low Back Pain"}},
+  {"model": "consultation.diagnosis", "pk": 12, "fields": {"name": "Osteoarthritis"}},
+  {"model": "consultation.diagnosis", "pk": 13, "fields": {"name": "Anemia"}},
+  {"model": "consultation.diagnosis", "pk": 14, "fields": {"name": "Asthma exacerbation"}},
+  {"model": "consultation.diagnosis", "pk": 15, "fields": {"name": "Acute Bronchitis"}},
+  {"model": "consultation.diagnosis", "pk": 16, "fields": {"name": "Gastritis / PUD (suspected)"}},
+  {"model": "consultation.diagnosis", "pk": 17, "fields": {"name": "Appendicitis (suspected)"}},
+  {"model": "consultation.diagnosis", "pk": 18, "fields": {"name": "Conjunctivitis"}},
+  {"model": "consultation.diagnosis", "pk": 19, "fields": {"name": "Limb Fracture (suspected)"}},
+  {"model": "consultation.diagnosis", "pk": 20, "fields": {"name": "Migraine / Tension Headache"}}
+]

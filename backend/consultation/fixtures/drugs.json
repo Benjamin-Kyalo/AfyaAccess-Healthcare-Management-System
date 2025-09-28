@@ -1,0 +1,15 @@
+[
+  {"model": "pharmacy.drug", "pk": 1, "fields": {"name": "Paracetamol", "strength_or_pack": "500 mg tablets (pack 10)", "quantity": 120, "unit_price": 50, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 2, "fields": {"name": "Amoxicillin", "strength_or_pack": "500 mg capsules (pack 10)", "quantity": 80, "unit_price": 200, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 3, "fields": {"name": "Azithromycin", "strength_or_pack": "250 mg tablets (pack 3)", "quantity": 40, "unit_price": 350, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 4, "fields": {"name": "Ciprofloxacin", "strength_or_pack": "500 mg tablets (pack 10)", "quantity": 30, "unit_price": 300, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 5, "fields": {"name": "Metronidazole", "strength_or_pack": "400 mg tablets (pack 10)", "quantity": 20, "unit_price": 100, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 6, "fields": {"name": "Ibuprofen", "strength_or_pack": "400 mg tablets (pack 10)", "quantity": 60, "unit_price": 70, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 7, "fields": {"name": "Cetirizine", "strength_or_pack": "10 mg tablets (pack 10)", "quantity": 50, "unit_price": 80, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 8, "fields": {"name": "Salbutamol (Ventolin) inhaler", "strength_or_pack": "100 mcg", "quantity": 18, "unit_price": 850, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 9, "fields": {"name": "Omeprazole", "strength_or_pack": "20 mg capsules (pack 14)", "quantity": 25, "unit_price": 150, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 10, "fields": {"name": "Atenolol", "strength_or_pack": "50 mg tablets (pack 10)", "quantity": 15, "unit_price": 120, "availability_status": "Out of stock"}},
+  {"model": "pharmacy.drug", "pk": 11, "fields": {"name": "Amlodipine", "strength_or_pack": "5 mg tablets (pack 10)", "quantity": 20, "unit_price": 130, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 12, "fields": {"name": "Lisinopril", "strength_or_pack": "10 mg tablets (pack 10)", "quantity": 12, "unit_price": 140, "availability_status": "Available"}},
+  {"model": "pharmacy.drug", "pk": 13, "fields": {"name": "Furosemide", "strength_or_pack": "40 mg tablets (pack 10)", "quantity": 15, "unit_price": 90, "availability_status": "Available"}}
+]
