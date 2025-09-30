@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders', #allow frontend to access backend
     'django_filters', #useful for API queries
+    'rest_framework_api_key', #API key auth
     
     # Local apps
     'accounts',
@@ -172,6 +173,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",   # helpful for browsable API testing
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework_api_key.permissions.HasAPIKey",  # API key auth
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 
