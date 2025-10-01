@@ -60,8 +60,14 @@ router.register(r'labs/results', LabResultViewSet, basename="lab-result")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+
     # -----------------------
     # Triage app endpoints
     # -----------------------
     path("api/triage/", include("triage.urls", namespace="triage")),
+
+    # -----------------------
+    # Reports app endpoints
+    # -----------------------
+    path("api/reports/", include("reports.urls")),   # ✅ Added reports
 ]
