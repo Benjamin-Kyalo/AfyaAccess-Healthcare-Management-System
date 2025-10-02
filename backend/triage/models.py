@@ -18,7 +18,7 @@ class TriageRecord(models.Model):
         related_name="attended_triages"
     )
 
-    # Vital signs with sensible defaults
+    # Vital signs with defaults
     temperature_c = models.FloatField(default=0.0, help_text="Temperature in °C")
     heart_rate_bpm = models.PositiveIntegerField(default=0, help_text="Heart rate in beats per minute")
     respiratory_rate_bpm = models.PositiveIntegerField(default=0, help_text="Respiratory rate in bpm")
@@ -44,4 +44,5 @@ class TriageRecord(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        # Readable string in admin/UI.
         return f"Triage for {self.patient} by {self.attended_by.username if self.attended_by else 'Unknown'}"

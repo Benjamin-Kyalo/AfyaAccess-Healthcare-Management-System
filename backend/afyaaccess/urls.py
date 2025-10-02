@@ -1,4 +1,3 @@
-# afyaaccess/urls.py
 from django.urls import path, include
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
@@ -69,5 +68,5 @@ urlpatterns = [
     # -----------------------
     # Reports app endpoints
     # -----------------------
-    path("api/reports/", include("reports.urls")),   # ✅ Added reports
+    path("api/reports/", include("reports.urls")),  
 ]

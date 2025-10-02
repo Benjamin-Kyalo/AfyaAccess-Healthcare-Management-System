@@ -15,11 +15,11 @@ class TriageRecordCreateView(generics.CreateAPIView):
     serializer_class = TriageRecordSerializer
 
     def perform_create(self, serializer):
-        # Save triage record with attending user
+        # Attach logged-in user as attending clinician
         serializer.save(attended_by=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        # Override to include summary in response
+        # Override default response to add vitals summary
         response = super().create(request, *args, **kwargs)
         record = TriageRecord.objects.get(id=response.data["id"])
         analysis = analyze_vitals(record)
@@ -67,8 +67,9 @@ class PatientsListView(generics.ListAPIView):
     Provides a simple patient list for frontend dropdown.
     """
     queryset = Patient.objects.all().order_by("first_name")
-    serializer_class = serializers.Serializer  # Dummy, we’ll override
+    serializer_class = serializers.Serializer  # Placeholder, we override list method
 
     def list(self, request, *args, **kwargs):
+        # Return only IDs + names for dropdowns
         patients = Patient.objects.all().values("id", "full_name")
         return Response(list(patients))

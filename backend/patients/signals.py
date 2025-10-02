@@ -3,10 +3,10 @@ from django.dispatch import receiver
 from django.apps import apps
 from .models import Patient, PatientStatusHistory
 
-# keep a snapshot of old status before saving
+# Before saving patient: capture old status for comparison
 @receiver(pre_save, sender=Patient)
 def patient_pre_save(sender, instance, **kwargs):
-    if instance.pk:
+    if instance.pk:  # if updating existing patient
         try:
             old = Patient.objects.get(pk=instance.pk)
             instance._old_status = old.status
@@ -16,50 +16,46 @@ def patient_pre_save(sender, instance, **kwargs):
         instance._old_status = None
 
 
+# After saving patient: check for status updates
 @receiver(post_save, sender=Patient)
 def patient_post_save(sender, instance, created, **kwargs):
     """
-    - On creation: if initial status is 'registered', we update to 'sent_to_billing' (one extra save).
-    - On any save: if status changed, create a PatientStatusHistory record.
+    - On creation: if status is 'registered', flip to 'sent_to_billing'.
+    - On update: if status changed, log it in PatientStatusHistory.
     """
     old = getattr(instance, "_old_status", None)
 
-    # 1) If patient was just created and still 'registered', flip to 'sent_to_billing'.
+    # If new patient was registered, move to "sent_to_billing"
     if created and instance.status == "registered":
         instance.status = "sent_to_billing"
-        # calling save() will trigger pre_save/post_save again; the second save will create the history entry
-        instance.save()
+        instance.save()  # triggers another post_save
         return
 
-    # 2) Create history when status changed
+    # If status changed, create history record
     if old != instance.status:
         PatientStatusHistory.objects.create(
             patient=instance,
             old_status=old,
             new_status=instance.status,
-            # changed_by remains null here; you may populate changed_by in views if needed
+            # changed_by can be filled in views if needed
         )
 
 
-# Billing -> update patient status when invoice is paid (triggered on billing model post_save)
+# Listen to Billing model saves to update patient status
 @receiver(post_save)
 def generic_post_save(sender, instance, **kwargs):
     """
-    This generic receiver checks the sender against the Billing model at runtime,
-    so we avoid circular import issues during app loading.
+    Dynamically check if the saved model is Billing (avoids circular import).
+    If a bill is paid, update patient status to 'ready_for_doctor'.
     """
     Billing = apps.get_model("billing", "Billing")
     if sender is not Billing:
         return
 
-    # now instance is a Billing
-    try:
-        patient = instance.patient
-    except Exception:
-        patient = None
+    patient = getattr(instance, "patient", None)
 
+    # If bill is paid, move patient to doctor queue
     if patient and instance.is_paid:
-        # only update if different
         if patient.status != "ready_for_doctor":
             patient.status = "ready_for_doctor"
             patient.save()

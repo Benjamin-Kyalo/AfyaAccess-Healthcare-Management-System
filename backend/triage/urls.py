@@ -9,6 +9,7 @@ from .views import (
 
 app_name = "triage"
 
+# Routes for triage features
 urlpatterns = [
     path("", TriageRecordCreateView.as_view(), name="triage-create"),
     path("patient/<int:patient_id>/", PatientTriageListView.as_view(), name="triage-patient-list"),

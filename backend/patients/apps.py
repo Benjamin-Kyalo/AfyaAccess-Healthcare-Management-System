@@ -5,4 +5,5 @@ class PatientsConfig(AppConfig):
     name = 'patients'
 
     def ready(self):
+        # Import signals so they are activated when app starts
         import patients.signals  # noqa

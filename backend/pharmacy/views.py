@@ -1,4 +1,3 @@
-# pharmacy/views.py
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import Drug, Dispense, AuditLog
@@ -10,9 +9,9 @@ class DrugViewSet(viewsets.ModelViewSet):
     """
     Handles CRUD operations for drugs in the pharmacy.
     """
-    queryset = Drug.objects.all().order_by("name")
+    queryset = Drug.objects.all().order_by("name")  # list drugs alphabetically
     serializer_class = DrugSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] # Only authenticated users can access
 
 
 # ViewSet for Dispenses
@@ -20,7 +19,7 @@ class DispenseViewSet(viewsets.ModelViewSet):
     """
     Handles CRUD operations for dispensing drugs to patients.
     """
-    queryset = Dispense.objects.all().order_by("-timestamp")
+    queryset = Dispense.objects.all().order_by("-timestamp") # most recent first
     serializer_class = DispenseSerializer
     permission_classes = [IsAuthenticated]
 

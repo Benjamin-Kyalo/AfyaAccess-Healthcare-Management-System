@@ -15,39 +15,39 @@ VITAL_RANGES = {
 
 def analyze_vitals(record):
     """
-    Analyze a triage record and return a text summary of abnormal vitals.
-    Example: "Low temperature: 35.0°C; Bradycardia: 45 bpm"
+    Analyze vitals and return a text summary of abnormalities.
+    Example: "Fever: 39°C; Tachycardia: 120 bpm"
     """
     alerts = []
 
-    # Temperature
+    # Temperature checks
     temp = record.temperature_c
     if temp < 36: alerts.append(f"Low temperature: {temp}°C")
     elif temp > 38: alerts.append(f"Fever: {temp}°C")
 
-    # Heart rate
+    # Heart rate checks
     hr = record.heart_rate_bpm
     if hr < 60: alerts.append(f"Bradycardia: {hr} bpm")
     elif hr > 100: alerts.append(f"Tachycardia: {hr} bpm")
 
-    # Respiratory rate
+    # Respiratory rate checks
     rr = record.respiratory_rate_bpm
     if rr < 12: alerts.append(f"Bradypnea: {rr} bpm")
     elif rr > 20: alerts.append(f"Tachypnea: {rr} bpm")
 
-    # Blood pressure
+    # Blood pressure checks
     sbp, dbp = record.systolic_bp, record.diastolic_bp
     if sbp < 90 or dbp < 60:
         alerts.append(f"Low BP: {sbp}/{dbp} mmHg")
     elif sbp > 140 or dbp > 90:
         alerts.append(f"High BP: {sbp}/{dbp} mmHg")
 
-    # SpO2
+    # SpO2 checks
     spo2 = record.spo2_percent
     if spo2 < 90: alerts.append(f"Critically low SpO₂: {spo2}%")
     elif spo2 < 95: alerts.append(f"Low SpO₂: {spo2}%")
 
-    # BMI
+    # BMI checks
     bmi = record.bmi
     if bmi:
         if bmi < 18.5: alerts.append(f"Underweight (BMI {bmi})")

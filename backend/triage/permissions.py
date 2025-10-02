@@ -9,5 +9,5 @@ class IsClinicianOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
-            return True
+            return True # Read allowed for anyone
         return request.user and request.user.is_staff

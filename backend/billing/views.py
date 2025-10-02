@@ -4,10 +4,13 @@ from rest_framework.response import Response
 from .models import Billing
 from .serializers import BillingSerializer
 
+# ViewSet for handling billing endpoints
 class BillingViewSet(viewsets.ModelViewSet):
+    # Return all bills ordered by most recent
     queryset = Billing.objects.all().order_by("-charged_at")
     serializer_class = BillingSerializer
 
+    # Custom endpoint: /billing/reports/
     @action(detail=False, methods=["get"])
     def reports(self, request):
         total_paid = Billing.objects.paid_total()
@@ -17,6 +20,7 @@ class BillingViewSet(viewsets.ModelViewSet):
             "total_unpaid": total_unpaid,
         })
 
+    # Custom endpoint: /billing/search/?q=...
     @action(detail=False, methods=["get"])
     def search(self, request):
         q = request.query_params.get("q", None)

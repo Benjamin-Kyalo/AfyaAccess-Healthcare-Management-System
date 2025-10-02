@@ -16,6 +16,7 @@ class TriageRecordSerializer(serializers.ModelSerializer):
     attended_by_name = serializers.CharField(source="attended_by.username", read_only=True)
     attended_by_id = serializers.IntegerField(source="attended_by.id", read_only=True)
 
+
     class Meta:
         model = TriageRecord
         fields = [
@@ -34,9 +35,7 @@ class TriageRecordSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        """
-        Extra validation can go here (e.g., ensuring vitals are within humanly possible limits).
-        """
+        """Check that temperature values are realistic."""
         if data.get("temperature_c") and (20 > data["temperature_c"] or data["temperature_c"] > 45):
             raise serializers.ValidationError("Temperature must be between 20°C and 45°C.")
         return data
