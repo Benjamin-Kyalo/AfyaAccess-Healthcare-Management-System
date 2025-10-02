@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 
 # Users, Patients, Billing
 from lab.views import LabRequestViewSet, LabResultViewSet
-from users.views import UserViewSet
 from patients.views import PatientViewSet
 from billing.views import BillingViewSet
 
@@ -30,7 +29,6 @@ router = DefaultRouter()
 # -----------------------
 # Core modules
 # -----------------------
-router.register(r'users', UserViewSet, basename="user")
 router.register(r'patients', PatientViewSet, basename="patient")
 router.register(r'billing', BillingViewSet, basename="billing")
 
@@ -59,6 +57,11 @@ router.register(r'labs/results', LabResultViewSet, basename="lab-result")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+
+    # -----------------------
+    # Users app endpoints
+    # -----------------------
+    path("api/users/", include("users.urls")),
 
     # -----------------------
     # Triage app endpoints
