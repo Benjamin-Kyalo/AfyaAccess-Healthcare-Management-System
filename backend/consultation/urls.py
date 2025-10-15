@@ -1,4 +1,3 @@
-# consultation/urls.py
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from .views import (
@@ -9,6 +8,7 @@ from .views import (
     DiagnosisViewSet,
 )
 
+# Register all endpoints under DRF router
 router = DefaultRouter()
 router.register(r'consultations', ConsultationViewSet, basename="consultation")
 router.register(r'prescriptions', PrescriptionViewSet, basename="prescription")
@@ -17,5 +17,5 @@ router.register(r'investigations', InvestigationViewSet, basename="investigation
 router.register(r'diagnoses', DiagnosisViewSet, basename="diagnosis")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", include(router.urls)),   # all routes are automatically generated
 ]

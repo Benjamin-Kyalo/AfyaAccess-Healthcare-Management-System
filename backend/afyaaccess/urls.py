@@ -1,11 +1,9 @@
-# afyaaccess/urls.py
 from django.urls import path, include
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 
 # Users, Patients, Billing
 from lab.views import LabRequestViewSet, LabResultViewSet
-from users.views import UserViewSet
 from patients.views import PatientViewSet
 from billing.views import BillingViewSet
 
@@ -31,7 +29,6 @@ router = DefaultRouter()
 # -----------------------
 # Core modules
 # -----------------------
-router.register(r'users', UserViewSet, basename="user")
 router.register(r'patients', PatientViewSet, basename="patient")
 router.register(r'billing', BillingViewSet, basename="billing")
 
@@ -62,6 +59,11 @@ urlpatterns = [
     path("api/", include(router.urls)),
 
     # -----------------------
+    # Users app endpoints
+    # -----------------------
+    path("api/users/", include("users.urls")),
+
+    # -----------------------
     # Triage app endpoints
     # -----------------------
     path("api/triage/", include("triage.urls", namespace="triage")),
@@ -69,5 +71,5 @@ urlpatterns = [
     # -----------------------
     # Reports app endpoints
     # -----------------------
-    path("api/reports/", include("reports.urls")),   # ✅ Added reports
+    path("api/reports/", include("reports.urls")),  
 ]

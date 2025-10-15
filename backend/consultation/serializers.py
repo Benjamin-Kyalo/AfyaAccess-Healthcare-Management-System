@@ -1,4 +1,3 @@
-# consultation/serializers.py
 from rest_framework import serializers
 from .models import Consultation, Prescription, PrescriptionItem, Investigation, Diagnosis
 from pharmacy.serializers import DrugSerializer
@@ -8,6 +7,7 @@ from patients.models import Patient
 
 
 class VitalsSerializer(serializers.Serializer):
+    # A plain serializer, no model — flexible JSON input/output for vitals
     sys = serializers.IntegerField(required=False)
     dia = serializers.IntegerField(required=False)
     pulse = serializers.IntegerField(required=False)
@@ -18,23 +18,25 @@ class VitalsSerializer(serializers.Serializer):
 
 
 class InvestigationSerializer(serializers.ModelSerializer):
+    # Simple mapping for lab investigations (id, name, price, availability)
     class Meta:
         model = Investigation
         fields = ["id", "name", "price", "availability_status"]
 
 
 class DiagnosisSerializer(serializers.ModelSerializer):
+    # Straightforward serializer for diagnoses
     class Meta:
         model = Diagnosis
         fields = ["id", "name"]
 
 
 class PrescriptionItemSerializer(serializers.ModelSerializer):
-    # doctor selects drug by id; show drug detail for UI
+    # doctor selects drug by id; also expose full drug detail for UI
     drug = serializers.PrimaryKeyRelatedField(queryset=Drug.objects.all())
     drug_detail = DrugSerializer(source="drug", read_only=True)
 
-    # expose human-readable display labels for the dropdowns
+    # Add human-readable dropdown labels (DRF convention)
     route_display = serializers.CharField(source="get_route_display", read_only=True)
     unit_display = serializers.CharField(source="get_unit_display", read_only=True)
     frequency_display = serializers.CharField(source="get_frequency_display", read_only=True)
@@ -58,6 +60,7 @@ class PrescriptionItemSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["quantity_dispensed"]
 
+    # Validation logic for numeric fields
     def validate_dose(self, value):
         if value is None:
             return value
@@ -73,14 +76,12 @@ class PrescriptionItemSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        # Optional: require dose & duration for numeric billing flows (if desired)
-        # If you want to force doctor to supply dose & duration, uncomment the lines below:
-        # if attrs.get("dose") is None or attrs.get("duration") is None:
-        #     raise serializers.ValidationError("dose and duration are required for billing.")
+        # Optional: could enforce dose & duration always required for billing
         return attrs
 
 
 class PrescriptionSerializer(serializers.ModelSerializer):
+    # Nested serializer for multiple items inside a prescription
     items = PrescriptionItemSerializer(many=True)
 
     class Meta:
@@ -89,6 +90,7 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         read_only_fields = ["status", "created_at"]
 
     def create(self, validated_data):
+        # Override create to handle nested prescription items
         items = validated_data.pop("items", [])
         prescription = Prescription.objects.create(**validated_data)
 
@@ -99,6 +101,7 @@ class PrescriptionSerializer(serializers.ModelSerializer):
 
 
 class ConsultationSerializer(serializers.ModelSerializer):
+    # Patient must have paid consultation bill before consultation is allowed
     patient = serializers.PrimaryKeyRelatedField(
         queryset=Patient.objects.filter(
             billings__service="consultation",
@@ -120,12 +123,14 @@ class ConsultationSerializer(serializers.ModelSerializer):
     )
     prescriptions = PrescriptionSerializer(many=True, write_only=True, required=False)
 
+    # Enriched read-only details for UI consumption
     investigations_detail = InvestigationSerializer(source="investigations", many=True, read_only=True)
     diagnoses_detail = DiagnosisSerializer(source="diagnoses", many=True, read_only=True)
     prescriptions_detail = PrescriptionSerializer(source="prescriptions", many=True, read_only=True)
 
-    patient_name = serializers.CharField(read_only=True)   # snapshot field
-    doctor_name = serializers.CharField(read_only=True)    # snapshot field
+    # Snapshot fields (doctor + patient names)
+    patient_name = serializers.CharField(read_only=True)
+    doctor_name = serializers.CharField(read_only=True)
 
     class Meta:
         model = Consultation
@@ -146,13 +151,19 @@ class ConsultationSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "patient_name", "doctor_name"]
 
     def create(self, validated_data):
-        # structured vitals + nested prescriptions
+        """
+        Override to handle nested objects:
+        - vitals stored as JSON
+        - nested prescriptions created
+        - automatic audit logging
+        - billing for investigations
+        """
         vitals_data = validated_data.pop("vitals", {})
         prescriptions_data = validated_data.pop("prescriptions", [])
         investigations = validated_data.pop("investigations", [])
         diagnoses = validated_data.pop("diagnoses", [])
 
-        # prefer explicit created_by in payload, otherwise use request.user if available
+        # Attach doctor automatically if not provided
         doctor = validated_data.get("created_by")
         if not doctor and self.context.get("request") and self.context["request"].user.is_authenticated:
             validated_data["created_by"] = self.context["request"].user
@@ -160,6 +171,7 @@ class ConsultationSerializer(serializers.ModelSerializer):
 
         patient = validated_data.get("patient")
 
+        # Create consultation record
         consultation = Consultation.objects.create(
             **validated_data,
             vitals=vitals_data,
@@ -167,12 +179,13 @@ class ConsultationSerializer(serializers.ModelSerializer):
             doctor_name=doctor.get_full_name() if doctor else ""
         )
 
+        # Set many-to-manys
         if investigations:
             consultation.investigations.set(investigations)
         if diagnoses:
             consultation.diagnoses.set(diagnoses)
 
-        # create prescriptions and items (status remains pending)
+        # Create prescriptions and items
         for presc in prescriptions_data:
             items = presc.pop("items", [])
             prescription = Prescription.objects.create(
@@ -182,7 +195,7 @@ class ConsultationSerializer(serializers.ModelSerializer):
             for it in items:
                 PrescriptionItem.objects.create(prescription=prescription, **it)
 
-            # audit log for prescription creation
+            # Audit log for prescription creation
             AuditLog.objects.create(
                 user=consultation.created_by,
                 action=AuditLog.ACTION_PRESCRIPTION_CREATED,
@@ -204,7 +217,7 @@ class ConsultationSerializer(serializers.ModelSerializer):
                 },
             )
 
-        # create billing for investigations (consultation billing handled separately if you want)
+        # Create billing entry for investigations
         Billing.objects.create(
             patient=consultation.patient,
             amount=sum(inv.price for inv in consultation.investigations.all()),

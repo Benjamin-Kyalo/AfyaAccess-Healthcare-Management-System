@@ -1,4 +1,3 @@
-# lab/views.py
 """
 DRF ViewSets for LabRequest and LabResult for easy router registration.
 - LabRequestViewSet: doctors can create requests; others can list/view.
@@ -13,7 +12,7 @@ from .serializers import LabRequestSerializer, LabResultSerializer
 from .permissions import IsDoctor, IsLabTechOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 
-
+# ViewSet for LabRequest
 class LabRequestViewSet(viewsets.ModelViewSet):
     queryset = LabRequest.objects.all().select_related("patient", "investigation")
     serializer_class = LabRequestSerializer
@@ -32,7 +31,7 @@ class LabRequestViewSet(viewsets.ModelViewSet):
             serializer.validated_data["test_name"] = getattr(inv, "name", "")
         serializer.save()
 
-
+# ViewSet for LabResult
 class LabResultViewSet(viewsets.ModelViewSet):
     queryset = LabResult.objects.all().select_related("lab_request", "performed_by")
     serializer_class = LabResultSerializer

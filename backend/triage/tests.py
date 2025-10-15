@@ -7,7 +7,9 @@ User = get_user_model()
 
 class TriageRecordTestCase(TestCase):
     def setUp(self):
+        # Create a clinician user
         self.user = User.objects.create_user(username="doctor1", password="testpass")
+        # Create a patient
         self.patient = Patient.objects.create(
             full_name="John Doe",
             age=30,
@@ -15,6 +17,7 @@ class TriageRecordTestCase(TestCase):
         )
 
     def test_create_triage_record(self):
+        # Create a triage record with vitals
         record = TriageRecord.objects.create(
             patient=self.patient,
             attended_by=self.user,
@@ -27,6 +30,8 @@ class TriageRecordTestCase(TestCase):
             weight_kg=70,
             height_cm=175,
         )
+        # Assert patient and clinician are linked properly
         self.assertEqual(record.patient.full_name, "John Doe")
         self.assertEqual(record.attended_by.username, "doctor1")
+        # Assert BMI is auto-calculated
         self.assertAlmostEqual(record.bmi, 22.86, places=2)
