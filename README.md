@@ -1,187 +1,223 @@
-Perfect request, Benjamin 👌 — since I’ve now gone through all your apps (users, accounts, patients, pharmacy, triage, lab, billing, consultation, reports), I can prepare a **full end-to-end `README.md`** for your AfyaAccess project.
-
-This README will be **human-like**, **clear**, and **developer-friendly**. It will:
-
-- Explain the project purpose.
-- Show folder structure.
-- Document each app’s role.
-- Include setup instructions.
-- Show example API usage.
-- Mention improvements & next steps.
-
-Here’s the draft 👇
-
----
-
 # 🏥 AfyaAccess Healthcare Management System
 
-AfyaAccess is a **modular hospital management system** built with **Django REST Framework** and **React (frontend planned)**.
-It aims to improve healthcare delivery in hospitals and rural clinics by providing **patient registration, billing, lab, pharmacy, triage, consultations, and reporting tools** in one integrated platform.
+AfyaAccess is a **comprehensive healthcare management system** built with **Django REST Framework** and Docker.  
+It streamlines hospital operations through modular applications that manage **patients, consultations, pharmacy, billing, triage, and reports** — all secured with **token-based authentication**.
 
 ---
 
-## 🚀 Features
+## 🚀 Project Overview
 
-- 👩‍⚕️ **User Management**: Staff login, roles (doctor, nurse, pharmacist, admin, etc.), JWT authentication.
-- 🧑‍🤝‍🧑 **Patient Management**: Register, update, and track patients.
-- 💉 **Triage Module**: Record vital signs & initial assessments.
-- 💊 **Pharmacy**: Manage medicines, stock, and prescriptions.
-- 🔬 **Laboratory**: Request and complete lab tests.
-- 🩺 **Consultations**: Manage doctor-patient consultations.
-- 💵 **Billing**: Track consultation, lab, and pharmacy charges; separate paid vs unpaid bills.
-- 📊 **Reports**: Generate summaries (patients, billing, consultations, triage).
+AfyaAccess is designed to improve healthcare delivery by integrating digital systems across departments.  
+It enables secure patient data management, billing transparency, and better coordination between healthcare providers.
+
+**Key Features**
+
+- Centralized patient records
+- Doctor–patient consultation tracking
+- Pharmacy drug inventory management
+- Automated billing and payment tracking
+- Role-based authentication and authorization
+- RESTful API endpoints for integration with mobile and web clients
 
 ---
 
-## 🗂️ Project Structure
+## 🧭 Project Structure
+
+Below is the simplified directory tree for the backend service:
 
 ```
+
 AfyaAccess-Healthcare-Management-System/
-│── accounts/        # Registration & JWT authentication
-│── users/           # Custom user model with roles
-│── patients/        # Patient records & management
-│── triage/          # Vital signs & triage records
-│── consultation/    # Doctor consultations
-│── pharmacy/        # Drug inventory & prescriptions
-│── lab/             # Lab test requests & results
-│── billing/         # Bills & payments
-│── reports/         # Reporting & analytics
-│── backend/         # Django project config
+│
+├── backend/
+│   ├── afyaaccess/                # Core Django project (settings, urls, wsgi)
+│   ├── users/                     # Authentication and user management
+│   ├── patients/                  # Patient registration and records
+│   ├── consultation/              # Consultations, diagnoses, prescriptions
+│   ├── pharmacy/                  # Drug inventory and dispensing
+│   ├── billing/                   # Invoices, payments, and billing logic
+│   ├── triage/                    # Vital signs, initial assessments
+│   ├── reports/                   # Analytics and data summaries
+│   └── manage.py
+│
+├── .env
+├── .env_example
+├── docker-compose.yml
+└── README.md
+├── requirements.txt
+
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Setup Instructions
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/AfyaAccess-Healthcare-Management-System.git
+git clone https://github.com/Benjamin-Kyalo/AfyaAccess-Healthcare-Management-System.git
 cd AfyaAccess-Healthcare-Management-System
 ```
 
-### 2. Create Virtual Environment
+### 2. Build and Run Docker Containers
 
 ```bash
-python -m venv venv
-source venv/bin/activate   # On Mac/Linux
-venv\Scripts\activate      # On Windows
+docker compose build
+docker compose up -d
 ```
 
-### 3. Install Dependencies
+### 3. Apply Migrations and Load Initial Data
 
 ```bash
-pip install -r requirements.txt
+docker compose exec backend python manage.py migrate
+docker compose exec backend python manage.py loaddata consultation/fixtures/drugs.json
 ```
 
-### 4. Setup Database
-
-Ensure PostgreSQL is installed & running. Create a database:
-
-```sql
-CREATE DATABASE afyaaccess_db;
-```
-
-Update `settings.py` with your DB credentials.
-
-### 5. Run Migrations
+### 4. Create a Superuser
 
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+docker compose exec backend python manage.py createsuperuser
 ```
 
-### 6. Create Superuser
+### 5. Access Services
 
-```bash
-python manage.py createsuperuser
+- **Backend API:** `http://localhost:8000/api/`
+- **pgAdmin:** `http://localhost:5050/`
+- **Admin Panel:** `http://localhost:8000/admin/`
+
+---
+
+## 🔐 Authentication
+
+AfyaAccess uses **token-based authentication (DRF Token Auth)**.
+
+### Obtain Token
+
+**Endpoint:**
+`POST /api/users/login/`
+
+**Request (raw JSON):**
+
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
 ```
 
-### 7. Run Development Server
+**Response:**
 
-```bash
-python manage.py runserver
+```json
+{
+  "token": "a1b2c3d4e5f6..."
+}
+```
+
+### Use Token in Postman
+
+Add the following header to every request:
+
+```
+Authorization: Token a1b2c3d4e5f6...
 ```
 
 ---
 
-## 🔑 Authentication
+## 🧩 Module Endpoints
 
-- Uses **JWT (JSON Web Tokens)** via `djangorestframework-simplejwt`.
-- Obtain tokens:
+Below are sample endpoints for each app (list is partial, showing 2–3 core routes per module):
 
-  - `POST /accounts/login/` → returns `access` + `refresh`.
+### 👤 Users
 
-- Refresh token:
-
-  - `POST /accounts/token/refresh/`.
-
----
-
-## 📌 API Endpoints (Examples)
-
-### Users
-
-```
-POST   /accounts/register/       # Register a new user
-POST   /accounts/login/          # Login with JWT
-GET    /users/                   # List all users
-```
-
-### Patients
-
-```
-POST   /patients/                # Register patient
-GET    /patients/                # List patients
-GET    /patients/{id}/           # Patient details
-```
-
-### Triage
-
-```
-POST   /triage/                  # Record triage data
-GET    /triage/                  # List all triage records
-```
-
-### Billing
-
-```
-GET    /billing/                 # All bills
-GET    /billing/{id}/            # Single bill
-```
-
-### Reports
-
-```
-GET    /reports/summary/         # High-level system summary
-GET    /reports/patients/        # Patient statistics
-GET    /reports/billing/         # Billing statistics
-GET    /reports/consultations/   # Consultation statistics
-GET    /reports/triage/          # Triage statistics
-```
+| Method | Endpoint               | Description         |
+| ------ | ---------------------- | ------------------- |
+| `POST` | `/api/users/register/` | Register a new user |
 
 ---
 
-## 🧪 Running Tests
+### 🩺 Patients
 
-```bash
-python manage.py test
-```
-
----
-
-## 📊 Future Improvements
-
-- ✅ **Date filters** for reports (daily, weekly, monthly trends).
-- ✅ **Role-based permissions** (e.g., billing only visible to admins).
-- ✅ **Aggregate queries** to optimize report queries.
-- ✅ **Unit & integration tests** for all apps.
-- ✅ **Frontend React app** for a modern hospital dashboard.
-- ✅ **Docker setup** for deployment.
+| Method | Endpoint              | Description                 |
+| ------ | --------------------- | --------------------------- |
+| `GET`  | `/api/patients/`      | List all patients           |
+| `POST` | `/api/patients/`      | Register a new patient      |
+| `GET`  | `/api/patients/{id}/` | Retrieve a patient’s record |
 
 ---
 
-## 👨‍💻 Contributors
+### 💬 Consultation
 
-- **Benjamin Kyalo** – Project Manager & Developer
-- ALX Software Engineering inspiration
+| Method | Endpoint                   | Description                  |
+| ------ | -------------------------- | ---------------------------- |
+| `GET`  | `/api/consultations/`      | List all consultations       |
+| `POST` | `/api/consultations/`      | Create a consultation record |
+| `GET`  | `/api/consultations/{id}/` | Get consultation details     |
+
+---
+
+### 💊 Pharmacy
+
+| Method | Endpoint                    | Description               |
+| ------ | --------------------------- | ------------------------- |
+| `GET`  | `/api/pharmacy/drugs/`      | View available drugs      |
+| `POST` | `/api/pharmacy/drugs/`      | Add new drug to inventory |
+| `GET`  | `/api/pharmacy/drugs/{id}/` | Get details of a drug     |
+
+---
+
+### 💰 Billing
+
+| Method | Endpoint                         | Description                     |
+| ------ | -------------------------------- | ------------------------------- |
+| `GET`  | `/api/billing/`                  | List all bills                  |
+| `POST` | `/api/billing/`                  | Create a new billing record     |
+| `POST` | `/api/billing/{id}/add-payment/` | Record a payment against a bill |
+
+---
+
+### 🧾 Reports
+
+| Method | Endpoint                 | Description                   |
+| ------ | ------------------------ | ----------------------------- |
+| `GET`  | `/api/reports/overview/` | Get system-wide summaries     |
+| `GET`  | `/api/reports/patients/` | View patient activity reports |
+| `GET`  | `/api/reports/billing/`  | Get billing analytics         |
+
+---
+
+### 🩹 Triage
+
+| Method | Endpoint            | Description              |
+| ------ | ------------------- | ------------------------ |
+| `GET`  | `/api/triage/`      | List triage assessments  |
+| `POST` | `/api/triage/`      | Create new triage record |
+| `GET`  | `/api/triage/{id}/` | Retrieve triage details  |
+
+---
+
+## 🧠 Developer Notes
+
+- Use `TokenAuthentication` in DRF for all protected routes.
+- Ensure Docker volumes are **not removed** when restarting (`avoid using -v`).
+- To reset data selectively:
+
+  ```bash
+  docker compose exec backend python manage.py flush
+  ```
+
+- Run automated tests:
+
+  ```bash
+  docker compose exec backend python manage.py test
+  ```
+
+---
+
+## 🩷 Authors & Credits
+
+**Benjamin Kyalo** — Project Manager & UX Researcher
+Guided by **ALX Africa Capstone Team**
+
+AfyaAccess is part of a mission to leverage **technology for equitable healthcare access in rural Kenya**.
+
+---

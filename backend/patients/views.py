@@ -9,6 +9,7 @@ from .serializers import PatientSerializer, PatientCreateSerializer
 from .permissions import IsReceptionOrAdmin
 from .services import register_patient, find_possible_matches
 
+
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by("-created_at")
     serializer_class = PatientSerializer
@@ -25,8 +26,54 @@ class PatientViewSet(viewsets.ModelViewSet):
         return super().perform_create(serializer)
 
     def create(self, request, *args, **kwargs):
+        """
+        Custom create method:
+        - Checks for duplicate patients before creating a new one.
+        - Uses register_patient() service for creation logic.
+        """
         data = request.data
+
+        # ✅ DUPLICATE CHECK
+        # We'll search by national_id first (most reliable), then fall back to
+        # name + dob combination if no national_id is provided.
+        national_id = data.get("national_id")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        dob = data.get("dob")
+
+        # Try to find an existing patient by national_id (if given)
+        if national_id:
+            existing = Patient.objects.filter(national_id=national_id).first()
+            if existing:
+                serialized = PatientSerializer(existing, context={"request": request})
+                return Response(
+                    {
+                        "detail": "A patient with this national ID already exists.",
+                        "patient": serialized.data,
+                    },
+                    status=status.HTTP_200_OK,  # ✅ Return existing record instead of creating new one
+                )
+
+        # Otherwise, check by name + dob (basic duplication prevention)
+        if first_name and last_name and dob:
+            existing = Patient.objects.filter(
+                first_name__iexact=first_name.strip(),
+                last_name__iexact=last_name.strip(),
+                dob=dob
+            ).first()
+            if existing:
+                serialized = PatientSerializer(existing, context={"request": request})
+                return Response(
+                    {
+                        "detail": "A patient with the same name and date of birth already exists.",
+                        "patient": serialized.data,
+                    },
+                    status=status.HTTP_200_OK,  # ✅ Return existing record instead of creating new one
+                )
+
+        # ✅ If no duplicates found, continue with normal registration
         result = register_patient(data, created_by=request.user)
+
         if not result["created"]:
             # return 409 Conflict with list of possible matches (serialized)
             matches = result["matches"]
@@ -35,7 +82,8 @@ class PatientViewSet(viewsets.ModelViewSet):
                 {"detail": "Possible existing patients found.", "matches": serialized.data},
                 status=status.HTTP_409_CONFLICT,
             )
-        # created True
+
+        # ✅ Created successfully
         patient = result["patient"]
         serialized = PatientSerializer(patient, context={"request": request})
         return Response(serialized.data, status=status.HTTP_201_CREATED)

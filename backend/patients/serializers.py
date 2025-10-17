@@ -1,7 +1,6 @@
-# backend/patients/serializers.py
 from rest_framework import serializers
 from .models import Patient
-from datetime import date
+from datetime import date, datetime  # ✅ added datetime for string-to-date conversion
 
 class PatientSerializer(serializers.ModelSerializer):
     # Read-only canonical id
@@ -39,10 +38,22 @@ class PatientSerializer(serializers.ModelSerializer):
 
     # compute age dynamically
     def get_age(self, obj):
+        # ✅ if dob is missing, return None
         if not obj.dob:
             return None
+
         today = date.today()
         born = obj.dob
+
+        # ✅ FIX: handle cases where dob is a string (e.g. '1995-05-10')
+        if isinstance(born, str):
+            try:
+                born = datetime.strptime(born, "%Y-%m-%d").date()
+            except ValueError:
+                # if dob string is invalid, return None safely instead of raising an error
+                return None
+
+        # ✅ calculate age normally once born is a date object
         return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 
